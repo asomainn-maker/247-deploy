@@ -1,0 +1,38 @@
+247-deploy Splitter Summary
+============================================================
+
+File: C:\Users\asoma\OneDrive\Desktop\247-deploy\discordbot.py
+Original size: 191,095 bytes (186.62 KB)
+Encoded size: 254,796 bytes (248.82 KB)
+Chunk size: 45 KB
+Total chunks: 6
+
+Chunk files:
+  chunks\discordbot.py_chunk_1.txt
+  chunks\discordbot.py_chunk_2.txt
+  chunks\discordbot.py_chunk_3.txt
+  chunks\discordbot.py_chunk_4.txt
+  chunks\discordbot.py_chunk_5.txt
+  chunks\discordbot.py_chunk_6.txt
+
+GitHub Secrets to create:
+------------------------------------------------------------
+  APP_CODE_1: (paste contents of chunks\discordbot.py_chunk_1.txt)
+  APP_CODE_2: (paste contents of chunks\discordbot.py_chunk_2.txt)
+  APP_CODE_3: (paste contents of chunks\discordbot.py_chunk_3.txt)
+  APP_CODE_4: (paste contents of chunks\discordbot.py_chunk_4.txt)
+  APP_CODE_5: (paste contents of chunks\discordbot.py_chunk_5.txt)
+  APP_CODE_6: (paste contents of chunks\discordbot.py_chunk_6.txt)
+------------------------------------------------------------
+
+Quick commands (GitHub CLI):
+------------------------------------------------------------
+  gh secret set APP_CODE_1 < chunks\discordbot.py_chunk_1.txt
+  gh secret set APP_CODE_2 < chunks\discordbot.py_chunk_2.txt
+  gh secret set APP_CODE_3 < chunks\discordbot.py_chunk_3.txt
+  gh secret set APP_CODE_4 < chunks\discordbot.py_chunk_4.txt
+  gh secret set APP_CODE_5 < chunks\discordbot.py_chunk_5.txt
+  gh secret set APP_CODE_6 < chunks\discordbot.py_chunk_6.txt
+------------------------------------------------------------
+
+The workflow will automatically reassemble these chunks in order.

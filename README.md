@@ -55,7 +55,7 @@ Open a terminal in the folder containing your script.
 Run the splitter:
 
 ```
-python tools/split.py your_script.py
+python tools/split.py discordbot.py
 ```
 
 Replace your_script.py with the actual name of your script.
