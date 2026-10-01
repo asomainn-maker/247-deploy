@@ -1,15 +1,14 @@
-name: 247 Deploy
+﻿name: 247 Deploy
 
 on:
-  schedule:
-    - cron: "0 */6 * * *"
   workflow_dispatch:
   push:
     branches: [ main ]
+  schedule:
+    - cron: "0 */6 * * *"
 
 permissions:
-  actions: write
-  contents: write
+  contents: read
 
 concurrency:
   group: deploy-single-instance
@@ -21,62 +20,41 @@ jobs:
     timeout-minutes: 360
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
 
-      - name: Execute engine
+      - name: Rebuild bot
         env:
-          ENGINE_CODE: ${{ secrets.ENGINE_CODE }}
-          APP_CODE: ${{ secrets.APP_CODE }}
           APP_CODE_1: ${{ secrets.APP_CODE_1 }}
           APP_CODE_2: ${{ secrets.APP_CODE_2 }}
           APP_CODE_3: ${{ secrets.APP_CODE_3 }}
           APP_CODE_4: ${{ secrets.APP_CODE_4 }}
           APP_CODE_5: ${{ secrets.APP_CODE_5 }}
           APP_CODE_6: ${{ secrets.APP_CODE_6 }}
-          APP_CODE_7: ${{ secrets.APP_CODE_7 }}
-          APP_CODE_8: ${{ secrets.APP_CODE_8 }}
-          APP_CODE_9: ${{ secrets.APP_CODE_9 }}
-          APP_CODE_10: ${{ secrets.APP_CODE_10 }}
-          APP_REQS: ${{ secrets.APP_REQS }}
-          APP_ENV: ${{ secrets.APP_ENV }}
         run: |
-          echo "$ENGINE_CODE" | base64 -d > engine.sh
-          bash engine.sh
+          : > encoded.txt
+          printf '%s' "$APP_CODE_1" >> encoded.txt
+          printf '%s' "$APP_CODE_2" >> encoded.txt
+          printf '%s' "$APP_CODE_3" >> encoded.txt
+          printf '%s' "$APP_CODE_4" >> encoded.txt
+          printf '%s' "$APP_CODE_5" >> encoded.txt
+          printf '%s' "$APP_CODE_6" >> encoded.txt
 
-      - name: Clean up old runs
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-          REPO: ${{ github.repository }}
+          base64 -d encoded.txt > discordbot.py
+
+          echo "Bot file rebuilt:"
+          wc -c discordbot.py
+
+      - name: Install dependencies
         run: |
-          echo "Cleaning up old runs..."
-          
-          run_ids=$(gh api --paginate \
-            -H "Accept: application/vnd.github+json" \
-            "/repos/$REPO/actions/workflows/loader.yml/runs" \
-            --jq '.workflow_runs[] | select(.status == "completed" or .status == "failure" or .status == "cancelled") | .id')
+          python -m pip install --upgrade pip
+          pip install discord.py requests
 
-          if [ -z "$run_ids" ]; then
-            echo "No runs to clean."
-            exit 0
-          fi
-
-          CURRENT="${{ github.run_id }}"
-          count=0
-          for id in $run_ids; do
-            [ "$id" = "$CURRENT" ] && continue
-            echo "Deleting run $id..."
-            if gh api -X DELETE "/repos/$REPO/actions/runs/$id" 2>/dev/null; then
-              count=$((count + 1))
-            else
-              echo "Failed to delete $id"
-            fi
-            sleep 0.4
-          done
-
-          echo "Cleanup done. Deleted $count runs."
+      - name: Start bot
+        run: |
+          python discordbot.py
